@@ -4,44 +4,45 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.URL;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity
+        implements MovieAdapter.OnMovieSelectedListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private MovieAdapter movieAdapter;
-    private RecyclerView recyclerView;
+    private ProgressBar loadingBar;
+    private TextView errorMessage;
+    private RecyclerView movieRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+        movieRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+        errorMessage = (TextView) findViewById(R.id.tv_error_message);
+        loadingBar = (ProgressBar) findViewById(R.id.pb_loading);
 
         GridLayoutManager gridLayoutManager
                 = new GridLayoutManager(MainActivity.this,2);
-        recyclerView.setLayoutManager(gridLayoutManager);
+        movieRecyclerView.setLayoutManager(gridLayoutManager);
 
-//        LinearLayoutManager linearLayoutManager
-//                = new GridLayoutManager(this, 2);
-//        recyclerView.setLayoutManager(linearLayoutManager);
-
-        recyclerView.setHasFixedSize(true);
+        movieRecyclerView.setHasFixedSize(true);
 
         movieAdapter = new MovieAdapter(this);
-        recyclerView.setAdapter(movieAdapter);
-
+        movieRecyclerView.setAdapter(movieAdapter);
         loadMovieData();
     }
 
@@ -56,31 +57,45 @@ public class MainActivity extends AppCompatActivity {
         int menuItemClicked = item.getItemId();
         switch (menuItemClicked) {
             case R.id.action_popularity :
-                new FetchMoviesDataTask().execute("popular");
+                new FetchMoviesDataTask().execute(TMDb.POPULAR);
                 return true;
             case R.id.action_rating :
-                new FetchMoviesDataTask().execute("top_rated");
+                new FetchMoviesDataTask().execute(TMDb.TOP_RATED);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
+
+    /**
+     * Load the movie data when the app starts.
+     */
     private void loadMovieData() {
-        new FetchMoviesDataTask().execute("popular");
+        showMovieData();
+        new FetchMoviesDataTask().execute(TMDb.POPULAR);
     }
 
     private void showMovieData() {
-        // TODO: 5/15/2017
+        errorMessage.setVisibility(View.INVISIBLE);
+        movieRecyclerView.setVisibility(View.VISIBLE);
     }
     private void showErrorMessage() {
-        // TODO: 5/15/2017
+        movieRecyclerView.setVisibility(View.INVISIBLE);
+        errorMessage.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onMovieSelectedListener(Movies movie) {
+        // TODO: 5/15/2017 Add intent for deatail view
+        Toast.makeText(this, movie.getOriginalTitle(), Toast.LENGTH_LONG).show();
     }
 
     public class FetchMoviesDataTask extends AsyncTask<String, Void, List<Movies>>{
 
         @Override
         protected void onPreExecute() {
+            loadingBar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
@@ -105,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<Movies> movieList) {
+            loadingBar.setVisibility(View.INVISIBLE);
             movieAdapter.setMovieData(movieList);
 
         }

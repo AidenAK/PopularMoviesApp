@@ -20,16 +20,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private static final String TAG = MovieAdapter.class.getSimpleName();
 
     private List<Movies> mMoviesList;
-
     private OnMovieSelectedListener callback;
     private Context mContext;
 
     public interface OnMovieSelectedListener {
-        void onMovieSelectedListener ();
+        void onMovieSelectedListener (Movies movie);
     }
 
     public MovieAdapter (Context context) {
-//        callback = listener;
+        callback = (OnMovieSelectedListener) context;
         mContext = context;
     }
 
@@ -63,16 +62,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         notifyDataSetChanged();
     }
 
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
 
         private ImageView posterView;
-        // TODO: 5/15/2017 Add OnClickListener
+
         public MovieAdapterViewHolder (View view) {
             super(view);
             posterView = (ImageView) view.findViewById(R.id.iv_movie_poster);
+            view.setOnClickListener(this);
         }
 
-
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            callback.onMovieSelectedListener(mMoviesList.get(adapterPosition));
+        }
     }
 }
 
