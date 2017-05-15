@@ -52,9 +52,10 @@ public final class JsonUtils {
      */
     private static Uri buildPosterUri(String posterPath) {
 
-        return Uri.parse(TMDb.POSTER_BASE_URL).buildUpon()
+        return Uri.parse(TMDb.POSTER_BASE_URL)
+                .buildUpon()
                 .appendPath(TMDb.POSTER_SIZE)
-                .appendPath(posterPath)
+                .appendEncodedPath(posterPath)
                 .build();
 
 
