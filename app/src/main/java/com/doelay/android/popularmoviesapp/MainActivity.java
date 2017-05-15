@@ -3,10 +3,13 @@ package com.doelay.android.popularmoviesapp;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.net.URL;
@@ -16,13 +19,30 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private MovieAdapter movieAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        recyclerView = (RecyclerView) findViewById(R.id.rv_movies);
 
+        GridLayoutManager gridLayoutManager
+                = new GridLayoutManager(MainActivity.this,2);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+//        LinearLayoutManager linearLayoutManager
+//                = new GridLayoutManager(this, 2);
+//        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setHasFixedSize(true);
+
+        movieAdapter = new MovieAdapter(this);
+        recyclerView.setAdapter(movieAdapter);
+
+        loadMovieData();
     }
 
     @Override
@@ -45,6 +65,16 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+    private void loadMovieData() {
+        new FetchMoviesDataTask().execute("popular");
+    }
+
+    private void showMovieData() {
+        // TODO: 5/15/2017
+    }
+    private void showErrorMessage() {
+        // TODO: 5/15/2017
     }
 
     public class FetchMoviesDataTask extends AsyncTask<String, Void, List<Movies>>{
@@ -74,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<Movies> jsonString) {
+        protected void onPostExecute(List<Movies> movieList) {
+            movieAdapter.setMovieData(movieList);
 
         }
     }
