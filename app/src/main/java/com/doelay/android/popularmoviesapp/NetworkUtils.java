@@ -41,8 +41,8 @@ public final class NetworkUtils {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.connect();
 
-            int  respodCode = httpURLConnection.getResponseCode();
-            if (respodCode != HttpURLConnection.HTTP_OK) {
+            int  responseCode = httpURLConnection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
                 return null;
             }
 

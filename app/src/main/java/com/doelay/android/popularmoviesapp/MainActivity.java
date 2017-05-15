@@ -1,10 +1,16 @@
 package com.doelay.android.popularmoviesapp;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.net.URL;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -15,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
     }
 
@@ -29,16 +36,46 @@ public class MainActivity extends AppCompatActivity {
         int menuItemClicked = item.getItemId();
         switch (menuItemClicked) {
             case R.id.action_popularity :
-                Toast.makeText(this,"sort by popularity",Toast.LENGTH_LONG).show();
-                // TODO: 5/11/2017 Add codes to sort by popularity
+                new FetchMoviesDataTask().execute("popular");
                 return true;
             case R.id.action_rating :
-                Toast.makeText(this,"sort by rating",Toast.LENGTH_LONG).show();
-                // TODO: 5/11/2017 Add codes to sort by rating
+                new FetchMoviesDataTask().execute("top_rated");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    public class FetchMoviesDataTask extends AsyncTask<String, Void, List<Movies>>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected List<Movies> doInBackground(String... strings) {
+
+            if (strings.length == 0){
+                return null;
+            }
+            try {
+                URL url = NetworkUtils.buildUrl(strings[0]);
+                String jsonString = NetworkUtils.getJsonData(url);
+                List moviesList = JsonUtils.parseJsonString(MainActivity.this,jsonString);
+                Log.d(TAG, "doInBackground: Movie list size "+ moviesList.size() );
+                return moviesList;
+            } catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(List<Movies> jsonString) {
+
+        }
     }
 }

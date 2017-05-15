@@ -1,7 +1,11 @@
 package com.doelay.android.popularmoviesapp;
 
+import android.net.Uri;
+
+import java.net.URL;
+
 /**
- * 
+ *
  */
 
 public class Movies {
@@ -9,11 +13,11 @@ public class Movies {
     private String originalTitle;
     private String overview;
     private String releaseDate;
-    private float rating;
-    private String posterPath;
+    private double rating;
+    private Uri posterPath;
 
 
-    public Movies(String originalTitle, String overview, String releaseDate, float rating, String posterPath) {
+    public Movies(String originalTitle, String overview, String releaseDate, double rating, Uri posterPath) {
         this.originalTitle = originalTitle;
         this.overview = overview;
         this.releaseDate = releaseDate;
@@ -33,11 +37,11 @@ public class Movies {
         return releaseDate;
     }
 
-    public float getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public String getPosterPath() {
+    public Uri getPosterPath() {
         return posterPath;
     }
 
@@ -57,7 +61,9 @@ public class Movies {
         this.rating = rating;
     }
 
-    public void setPosterPath(String posterPath) {
+    public void setPosterPath(Uri posterPath) {
         this.posterPath = posterPath;
     }
+
+
 }
