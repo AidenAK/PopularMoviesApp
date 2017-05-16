@@ -28,7 +28,7 @@ public class Movies implements Parcelable {
     }
 
     /**
-     * Consturctor used to create object by CREATER
+     * Constructor used to create object by CREATER
      */
     private Movies (Parcel in) {
         originalTitle = in.readString();
@@ -56,7 +56,7 @@ public class Movies implements Parcelable {
     }
 
     /**
-     * Used when unpacking the parcel - creating the object
+     * Used when unpacking the parcel - creating the object from parcel
      */
     public static final Parcelable.Creator<Movies> CREATOR
             = new Parcelable.Creator<Movies>() {

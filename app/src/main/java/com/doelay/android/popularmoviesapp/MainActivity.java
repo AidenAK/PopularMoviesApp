@@ -1,5 +1,6 @@
 package com.doelay.android.popularmoviesapp;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -86,9 +87,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMovieSelectedListener(Movies movie) {
-        // TODO: 5/15/2017 Add intent for deatail view
-        Toast.makeText(this, movie.getOriginalTitle(), Toast.LENGTH_LONG).show();
+    public void onMovieSelectedListener(Movies movieSelected) {
+
+        Intent intentToStartMovieDetailActivity = new Intent(this, MovieDetailActivity.class);
+        intentToStartMovieDetailActivity.putExtra("Movie detail", movieSelected);
+        startActivity(intentToStartMovieDetailActivity);
+
     }
 
     public class FetchMoviesDataTask extends AsyncTask<String, Void, List<Movies>>{
