@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
     public void onMovieSelectedListener(Movies movieSelected) {
 
         Intent intentToStartMovieDetailActivity = new Intent(this, MovieDetailActivity.class);
-        intentToStartMovieDetailActivity.putExtra("Movie detail", movieSelected);
+        intentToStartMovieDetailActivity.putExtra("MovieDetail", movieSelected);
         startActivity(intentToStartMovieDetailActivity);
 
     }
@@ -124,8 +124,13 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(List<Movies> movieList) {
-            loadingBar.setVisibility(View.INVISIBLE);
-            movieAdapter.setMovieData(movieList);
+            if (movieList != null) {
+                loadingBar.setVisibility(View.INVISIBLE);
+                movieAdapter.setMovieData(movieList);
+            } else {
+                showErrorMessage();
+            }
+
 
         }
     }
