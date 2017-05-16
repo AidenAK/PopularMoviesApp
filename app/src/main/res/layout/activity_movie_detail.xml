@@ -49,6 +49,7 @@
                 android:layout_height="match_parent">
 
                 <ImageView
+                    android:id="@+id/iv_star"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_marginLeft="16dp"
@@ -66,7 +67,7 @@
                     android:layout_marginTop="16dp"
                     android:textSize="16sp"
                     app:layout_constraintHorizontal_bias="0.254"
-                    app:layout_constraintLeft_toRightOf="@+id/imageView"
+                    app:layout_constraintLeft_toRightOf="@+id/iv_star"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Rating"/>

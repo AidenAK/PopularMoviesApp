@@ -33,7 +33,7 @@ public final class JsonUtils {
             double rating = movieObject.getDouble("vote_average");
 
             String posterPath = movieObject.getString("poster_path");
-            Uri posterUri = buildPosterUri(posterPath);
+            String posterUri = buildPosterUri(posterPath);
 
             Movies movie = new Movies(originalTitle,
                             overview,
@@ -50,13 +50,14 @@ public final class JsonUtils {
      * @param posterPath Movie poster file path
      * @return The Uri to query the movie poster in specific size.
      */
-    private static Uri buildPosterUri(String posterPath) {
+    private static String buildPosterUri(String posterPath) {
 
-        return Uri.parse(TMDb.POSTER_BASE_URL)
+        Uri uri = Uri.parse(TMDb.POSTER_BASE_URL)
                 .buildUpon()
                 .appendPath(TMDb.POSTER_SIZE)
                 .appendEncodedPath(posterPath)
                 .build();
+        return uri.toString();
 
 
     }
