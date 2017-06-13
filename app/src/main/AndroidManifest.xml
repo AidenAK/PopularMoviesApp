@@ -27,6 +27,9 @@
                 <!--android:name="android.support.PARENT_ACTIVITY"-->
                 <!--android:resource=".MainActivity"/>-->
         </activity>
+        <provider
+            android:name=".db.MoviesProvider"
+            android:authorities="com.doelay.android.popularmoviesapp"/>
     </application>
 
 </manifest>
