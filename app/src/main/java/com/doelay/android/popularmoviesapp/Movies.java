@@ -17,14 +17,16 @@ public class Movies implements Parcelable {
     private String releaseDate;
     private double rating;
     private String posterPath;
+    private long id;
 
 
-    public Movies(String originalTitle, String overview, String releaseDate, double rating, String posterPath) {
+    public Movies(String originalTitle, String overview, String releaseDate, double rating, String posterPath, long id) {
         this.originalTitle = originalTitle;
         this.overview = overview;
         this.releaseDate = releaseDate;
         this.rating = rating;
         this.posterPath = posterPath;
+        this.id = id;
     }
 
     /**
@@ -36,6 +38,7 @@ public class Movies implements Parcelable {
         releaseDate = in.readString();
         rating = in.readDouble();
         posterPath = in.readString();
+        id = in.readLong();
     }
     @Override
     public int describeContents() {
@@ -52,6 +55,7 @@ public class Movies implements Parcelable {
         out.writeString(releaseDate);
         out.writeDouble(rating);
         out.writeString(posterPath);
+        out.writeLong(id);
 
     }
 
@@ -92,6 +96,10 @@ public class Movies implements Parcelable {
         return posterPath;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public void setOriginalTitle(String originalTitle) {
         this.originalTitle = originalTitle;
     }
@@ -110,6 +118,10 @@ public class Movies implements Parcelable {
 
     public void setPosterPath(String posterPath) {
         this.posterPath = posterPath;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
 }

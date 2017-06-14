@@ -35,11 +35,14 @@ public final class JsonUtils {
             String posterPath = movieObject.getString("poster_path");
             String posterUri = buildPosterUri(posterPath);
 
+            long movieId = movieObject.getLong("id");
+
             Movies movie = new Movies(originalTitle,
                             overview,
                             releaseDate,
                             rating,
-                            posterUri);
+                            posterUri,
+                            movieId);
             moviesList.add(movie);
         }
         return moviesList;
