@@ -19,16 +19,19 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        final String CREATE_TABLE = "CREATE TABLE " + MoivesContract.MoviesEntry.TABEL_NAME + " (" +
+        final String CREATE_TABLE = "CREATE TABLE " + MoivesContract.MoviesEntry.TABLE_NAME + " (" +
                 MoivesContract.MoviesEntry.MOVIE_ID + " INTEGER PRIMARY KEY, " +
-                MoivesContract.MoviesEntry.MOVIE_TITLE + " TEXT NOT NULL);";
+                MoivesContract.MoviesEntry.MOVIE_TITLE + " TEXT NOT NULL, " +
+                MoivesContract.MoviesEntry.MOVIE_OVERVIEW + " TEXT NOT NULL, " +
+                MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
+                MoivesContract.MoviesEntry.MOVIE_POSTER_PATH + " TEXT NOT NULL);";
         sqLiteDatabase.execSQL(CREATE_TABLE);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MoivesContract.MoviesEntry.TABEL_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MoivesContract.MoviesEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

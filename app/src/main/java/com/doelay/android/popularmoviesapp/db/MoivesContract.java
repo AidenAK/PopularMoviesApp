@@ -18,6 +18,11 @@ public class MoivesContract {
         public static final String TABLE_NAME = "FavoriteMovies";
         public static final String MOVIE_ID = "movie_id";
         public static final String MOVIE_TITLE = "movie_title";
+        public static final String MOVIE_OVERVIEW = "movie_overview";
+        public static final String MOVIE_RELEASE_DATE = "movie_release_date";
+        public static final String MOVIE_POSTER_PATH = "movie_poster_path";
+
+
     }
 
 }
