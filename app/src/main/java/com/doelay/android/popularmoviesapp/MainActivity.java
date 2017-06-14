@@ -27,6 +27,9 @@ public class MainActivity extends AppCompatActivity
     private TextView errorMessage;
     private RecyclerView movieRecyclerView;
 
+
+    // TODO: 5/17/2017 Save the data on screen rotation
+    // TODO: 5/17/2017 layout for landscape with more than 2 columns
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

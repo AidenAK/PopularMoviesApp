@@ -18,6 +18,7 @@ public final class NetworkUtils {
 
     private static final String BASE_URI = TMDb.BASE_URL;
     private final static String API_KEY = "api_key";
+    // TODO: 5/16/2017 Need to build Url to extract more than 20 movies
 
     public static URL buildUrl (String searchCriteria) {
         Uri buildUri = Uri.parse(BASE_URI).buildUpon()
