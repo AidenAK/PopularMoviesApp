@@ -2,12 +2,12 @@ package com.doelay.android.popularmoviesapp;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +16,8 @@ import java.util.List;
  */
 
 public final class JsonUtils {
+
+    private static final String TAG = JsonUtils.class.getSimpleName();
 
     public static List<Movies> parseJsonString (Context context, String jsonString)
             throws JSONException{
@@ -47,6 +49,24 @@ public final class JsonUtils {
         }
         return moviesList;
     }
+    public static String[] parseJsonForTrailer(String jsonString)
+            throws JSONException {
+
+        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONArray resultArray = jsonObject.getJSONArray("results");
+
+        //create an array to store the trailer links
+        String[] trailerList = new String[resultArray.length()];
+
+        for (int i=0; i < resultArray.length(); i++) {
+            JSONObject trailerObject = resultArray.getJSONObject(i);
+            String key = trailerObject.getString("key");
+
+            //create trailer url
+            trailerList[i] = buildTrailerUri(key);
+        }
+        return trailerList;
+    }
 
     /**
      * Build poster Uri needed to get the movie poster from TMDb.
@@ -61,7 +81,15 @@ public final class JsonUtils {
                 .appendEncodedPath(posterPath)
                 .build();
         return uri.toString();
+    }
+    private static String buildTrailerUri(String trailerKey) {
 
+        Uri uri = Uri.parse(TMDb.TRAILER_BASE_URL)
+                .buildUpon()
+                .appendEncodedPath("watch?v=" + trailerKey)
+                .build();
+        Log.d(TAG, "buildTrailerUri: Trailer link is "+ uri.toString());
+        return uri.toString();
 
     }
 }

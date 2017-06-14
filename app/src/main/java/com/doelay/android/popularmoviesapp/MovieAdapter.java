@@ -70,58 +70,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             implements View.OnClickListener{
 
         private ImageView posterView;
-        private ImageView favoriteStar;
 
         public MovieAdapterViewHolder (View view) {
             super(view);
             posterView = (ImageView) view.findViewById(R.id.iv_movie_poster);
-            posterView.setOnClickListener(this);
-//            favoriteStar = (ImageView) view.findViewById(R.id.iv_favorite_star_off);
-//            favoriteStar.setOnClickListener(this);
+            view.setOnClickListener(this);
+
         }
 
-        // TODO: 6/14/2017 need to fix favorite on/off
         @Override
         public void onClick(View view) {
-            Movies moviesSelected;
             int adapterPosition = getAdapterPosition();
-
-            switch(view.getId()) {
-                case R.id.iv_favorite_star_off:
-                    //set favorite star on
-                    ImageView getViewOff = (ImageView) view;
-                    getViewOff.setVisibility(View.INVISIBLE);
-                    getViewOff.setImageResource(android.R.drawable.btn_star_big_on);
-                    getViewOff.setVisibility(View.VISIBLE);
-
-                    //extract movie data and store in content provider
-                    moviesSelected = mMoviesList.get(adapterPosition);
-
-                    ContentValues values = new ContentValues();
-                    values.put(MoivesContract.MoviesEntry.MOVIE_ID, moviesSelected.getId());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_TITLE, moviesSelected.getOriginalTitle());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_OVERVIEW, moviesSelected.getOverview());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE, moviesSelected.getReleaseDate());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_POSTER_PATH, moviesSelected.getPosterPath());
-
-                    Uri uri = mContext.getContentResolver()
-                            .insert(MoivesContract.MoviesEntry.CONTENT_URI, values);
-                    if(uri != null) {
-                        Toast.makeText(mContext,"Added to Favorite Movies!", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-                case R.id.iv_favorite_star_on:
-                    ImageView getViewOn = (ImageView) view;
-                    getViewOn.setVisibility(View.INVISIBLE);
-                    getViewOn.setImageResource(android.R.drawable.btn_star_big_off);
-                    getViewOn.setVisibility(View.VISIBLE);
-                    Toast.makeText(mContext,"Favorite icon off!", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.iv_movie_poster:
-                    callback.onMovieSelectedListener(mMoviesList.get(adapterPosition));
-            }
-
-
+            callback.onMovieSelectedListener(mMoviesList.get(adapterPosition));
         }
     }
 }
