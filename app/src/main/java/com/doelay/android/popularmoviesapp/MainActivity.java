@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMovieSelectedListener(Movies movieSelected) {
 
+
         Intent intentToStartMovieDetailActivity = new Intent(this, MovieDetailActivity.class);
         intentToStartMovieDetailActivity.putExtra("MovieDetail", movieSelected);
         startActivity(intentToStartMovieDetailActivity);
@@ -114,9 +115,9 @@ public class MainActivity extends AppCompatActivity
                 return null;
             }
             try {
-                URL url = NetworkUtils.buildUrl(strings[0]);
+                URL url = NetworkUtils.buildUrl(null, strings[0]);
                 String jsonString = NetworkUtils.getJsonData(url);
-                List moviesList = JsonUtils.parseJsonString(MainActivity.this,jsonString);
+                List moviesList = JsonUtils.parseJsonString( MainActivity.this, jsonString);
                 Log.d(TAG, "doInBackground: Movie list size "+ moviesList.size() );
                 return moviesList;
             } catch (Exception e){

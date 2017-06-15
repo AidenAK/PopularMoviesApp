@@ -44,7 +44,8 @@ public final class JsonUtils {
                             releaseDate,
                             rating,
                             posterUri,
-                            movieId);
+                            movieId,
+                            null);
             moviesList.add(movie);
         }
         return moviesList;

@@ -6,15 +6,18 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.doelay.android.popularmoviesapp.task.GetTrailerLinkTask;
 import com.squareup.picasso.Picasso;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity
+        implements GetTrailerLinkTask.OnDataAvailable {
 
-    TextView movieTitle;
-    TextView voteAverage;
-    TextView releaseDate;
-    TextView plot;
-    ImageView moviePoster;
+    private TextView movieTitle;
+    private TextView voteAverage;
+    private TextView releaseDate;
+    private TextView plot;
+    private ImageView moviePoster;
+    private Movies movieSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +32,14 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            Movies movieSelected = intent.getParcelableExtra("MovieDetail");
+
+            movieSelected = intent.getParcelableExtra("MovieDetail");
+
+            String movieIdString = String.valueOf(movieSelected.getId());
+            //fetch video links
+            new GetTrailerLinkTask(this).execute(movieIdString);
+
+            // TODO: 6/14/2017 fetch reviews
 
             String originalTitle = movieSelected.getOriginalTitle();
             movieTitle.setText(originalTitle);
@@ -48,6 +58,15 @@ public class MovieDetailActivity extends AppCompatActivity {
                     .load(posterPath)
                     .into(moviePoster);
         }
+    }
 
+    /**
+     * A callback after the trailer links are downloaded.
+     * Trailer links are added to movie object.
+     * @param trailerLinks  videos urls
+     */
+    @Override
+    public void onTrailerLinkAvailable(String[] trailerLinks) {
+        movieSelected.setTrailerLinks(trailerLinks);
     }
 }
