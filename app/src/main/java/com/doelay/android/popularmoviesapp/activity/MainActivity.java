@@ -1,4 +1,4 @@
-package com.doelay.android.popularmoviesapp;
+package com.doelay.android.popularmoviesapp.activity;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,7 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.doelay.android.popularmoviesapp.model.Movies;
+import com.doelay.android.popularmoviesapp.utils.JsonUtils;
+import com.doelay.android.popularmoviesapp.adapter.MovieAdapter;
+import com.doelay.android.popularmoviesapp.utils.NetworkUtils;
+import com.doelay.android.popularmoviesapp.R;
+import com.doelay.android.popularmoviesapp.TMDb;
 
 import java.net.URL;
 import java.util.List;

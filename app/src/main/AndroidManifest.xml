@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity">
+            android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -21,8 +21,8 @@
         </activity>
 
         <activity
-            android:name=".MovieDetailActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".activity.MovieDetailActivity"
+            android:parentActivityName=".activity.MainActivity">
             <!--<meta-data-->
                 <!--android:name="android.support.PARENT_ACTIVITY"-->
                 <!--android:resource=".MainActivity"/>-->

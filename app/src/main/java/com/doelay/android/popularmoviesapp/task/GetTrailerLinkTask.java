@@ -2,10 +2,14 @@ package com.doelay.android.popularmoviesapp.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import com.doelay.android.popularmoviesapp.JsonUtils;
-import com.doelay.android.popularmoviesapp.NetworkUtils;
+import android.util.Log;
+
+import com.doelay.android.popularmoviesapp.model.Trailer;
+import com.doelay.android.popularmoviesapp.utils.JsonUtils;
+import com.doelay.android.popularmoviesapp.utils.NetworkUtils;
 import com.doelay.android.popularmoviesapp.TMDb;
 import java.net.URL;
+import java.util.List;
 
 
 /**
@@ -38,7 +42,8 @@ public class GetTrailerLinkTask extends AsyncTask <String, Void, String[]> {
             URL trailerUrl = NetworkUtils.buildUrl(movieId[0], TMDb.VIDEOS);
             String trailerJsonString = NetworkUtils.getJsonData(trailerUrl);
             String[] trailerList = JsonUtils.parseJsonForTrailer(trailerJsonString);
-
+            Log.d(TAG, "doInBackground: "+ trailerList);
+            // TODO: 6/19/2017 need to grab trailer thumbnail
             return trailerList;
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,6 +53,7 @@ public class GetTrailerLinkTask extends AsyncTask <String, Void, String[]> {
 
     @Override
     protected void onPostExecute(String[] trailerLink) {
+        Log.d(TAG, "onPostExecute: " + trailerLink);
         mCallback.onTrailerLinkAvailable(trailerLink);
     }
 }

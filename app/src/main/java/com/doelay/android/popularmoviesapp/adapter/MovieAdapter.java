@@ -1,17 +1,15 @@
-package com.doelay.android.popularmoviesapp;
+package com.doelay.android.popularmoviesapp.adapter;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.doelay.android.popularmoviesapp.db.MoivesContract;
+import com.doelay.android.popularmoviesapp.R;
+import com.doelay.android.popularmoviesapp.model.Movies;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

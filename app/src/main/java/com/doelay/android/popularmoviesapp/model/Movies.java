@@ -1,8 +1,12 @@
-package com.doelay.android.popularmoviesapp;
+package com.doelay.android.popularmoviesapp.model;
 
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -17,7 +21,7 @@ public class Movies implements Parcelable {
     private double rating;
     private String posterPath;
     private long id;
-    private String[] trailerLinks;
+    private Trailer trailerLinks;
 
 
     public Movies(String originalTitle,
@@ -26,7 +30,7 @@ public class Movies implements Parcelable {
                   double rating,
                   String posterPath,
                   long id,
-                  String[] links) {
+                  Trailer links) {
 
         this.originalTitle = originalTitle;
         this.overview = overview;
@@ -47,7 +51,9 @@ public class Movies implements Parcelable {
         rating = in.readDouble();
         posterPath = in.readString();
         id = in.readLong();
-        trailerLinks = in.createStringArray();
+
+        Bundle bundle = in.readBundle(getClass().getClassLoader());
+        trailerLinks = bundle.getParcelable("trailerPath");
     }
     @Override
     public int describeContents() {
@@ -65,9 +71,11 @@ public class Movies implements Parcelable {
         out.writeDouble(rating);
         out.writeString(posterPath);
         out.writeLong(id);
-        out.writeArray(trailerLinks);
 
-    }
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("trailerPath", trailerLinks);
+        out.writeBundle(bundle);
+}
 
     /**
      * Used when unpacking the parcel - creating the object from parcel
@@ -110,7 +118,7 @@ public class Movies implements Parcelable {
         return id;
     }
 
-    public String[] getTrailerLinks() {
+    public Trailer getTrailerLinks() {
         return trailerLinks;
     }
 
@@ -138,7 +146,7 @@ public class Movies implements Parcelable {
         this.id = id;
     }
 
-    public void setTrailerLinks(String[] links) {
+    public void setTrailerLinks(Trailer links) {
         this.trailerLinks = links;
     }
 

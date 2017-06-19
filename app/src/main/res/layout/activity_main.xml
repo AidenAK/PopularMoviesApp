@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.doelay.android.popularmoviesapp.MainActivity">
+    tools:context="com.doelay.android.popularmoviesapp.activity.MainActivity">
 
 
     <ProgressBar

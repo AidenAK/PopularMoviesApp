@@ -1,7 +1,9 @@
-package com.doelay.android.popularmoviesapp;
+package com.doelay.android.popularmoviesapp.utils;
 
 import android.net.Uri;
-import android.util.Log;
+
+import com.doelay.android.popularmoviesapp.TMDb;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,7 +40,7 @@ public final class NetworkUtils {
             url = UriToUrl(buildUri);
 
         }
-        //build Url with movie id and search criteria
+        //build Url with movie id and search criteria such as reviews
         if(movieId != null && searchCriteria != null) {
             buildUri = Uri.parse(BASE_URI).buildUpon()
                     .appendPath(movieId)

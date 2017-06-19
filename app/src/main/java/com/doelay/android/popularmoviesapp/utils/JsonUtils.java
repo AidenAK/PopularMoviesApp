@@ -1,8 +1,12 @@
-package com.doelay.android.popularmoviesapp;
+package com.doelay.android.popularmoviesapp.utils;
 
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+
+import com.doelay.android.popularmoviesapp.TMDb;
+import com.doelay.android.popularmoviesapp.model.Movies;
+import com.doelay.android.popularmoviesapp.model.Trailer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,20 +57,20 @@ public final class JsonUtils {
     public static String[] parseJsonForTrailer(String jsonString)
             throws JSONException {
 
+
         JSONObject jsonObject = new JSONObject(jsonString);
         JSONArray resultArray = jsonObject.getJSONArray("results");
-
-        //create an array to store the trailer links
-        String[] trailerList = new String[resultArray.length()];
+        //create array to store trailer paths
+        String[] trailerPath = new String[resultArray.length()];
 
         for (int i=0; i < resultArray.length(); i++) {
             JSONObject trailerObject = resultArray.getJSONObject(i);
             String key = trailerObject.getString("key");
 
-            //create trailer url
-            trailerList[i] = buildTrailerUri(key);
+            trailerPath[i] = buildTrailerUri(key);
+            Log.d(TAG, "parseJsonForTrailer: "+ trailerPath[i]);
         }
-        return trailerList;
+        return trailerPath;
     }
 
     /**
@@ -89,7 +93,6 @@ public final class JsonUtils {
                 .buildUpon()
                 .appendEncodedPath("watch?v=" + trailerKey)
                 .build();
-        Log.d(TAG, "buildTrailerUri: Trailer link is "+ uri.toString());
         return uri.toString();
 
     }
