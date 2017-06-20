@@ -5,4 +5,6 @@
     <string name="movie_poster">Movie Poster</string>
     <string name="error_message">Error loading data. Please try again later.</string>
     <string name="over_view">Overview</string>
+    <string name="trailer">Trailer</string>
+    <string name="comment">Comment</string>
 </resources>

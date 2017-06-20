@@ -12,6 +12,8 @@ public class Trailer implements Parcelable{
     private String trailerTitle;
     private String trailerThumbnailPath;
     private String[] trailerPath;
+    // TODO: 6/19/2017 fix this class to store each trailer instead of all paths
+
 
     public Trailer(String trailerTitle, String trailerThumbnailPath, String[] trailerPath) {
 

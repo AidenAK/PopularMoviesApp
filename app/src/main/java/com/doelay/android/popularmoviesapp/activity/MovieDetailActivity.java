@@ -5,19 +5,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.doelay.android.popularmoviesapp.R;
+import com.doelay.android.popularmoviesapp.adapter.ReviewAdapter;
 import com.doelay.android.popularmoviesapp.adapter.TrailerAdapter;
 import com.doelay.android.popularmoviesapp.model.Movies;
+import com.doelay.android.popularmoviesapp.model.Review;
 import com.doelay.android.popularmoviesapp.model.Trailer;
+import com.doelay.android.popularmoviesapp.task.GetReviewTask;
 import com.doelay.android.popularmoviesapp.task.GetTrailerLinkTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 public class MovieDetailActivity extends AppCompatActivity
-        implements GetTrailerLinkTask.OnDataAvailable, TrailerAdapter.OnTrailerSelectedListener {
+        implements GetTrailerLinkTask.OnTrailerDataAvailable, TrailerAdapter.OnTrailerSelectedListener, GetReviewTask.OnReviewAvailable {
+
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
 
     private TextView movieTitle;
@@ -30,6 +34,8 @@ public class MovieDetailActivity extends AppCompatActivity
     private Trailer mTrailer;
     private RecyclerView trailerRecyclerView;
     private TrailerAdapter trailerAdapter;
+    private RecyclerView reviewRecyclerView;
+    private ReviewAdapter reviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,25 +49,41 @@ public class MovieDetailActivity extends AppCompatActivity
         moviePoster = (ImageView) findViewById(R.id.iv_movie_poster);
         backdrop = (ImageView) findViewById(R.id.iv_backdrop);
         trailerRecyclerView = (RecyclerView) findViewById(R.id.rv_trailer_view);
+        reviewRecyclerView = (RecyclerView) findViewById(R.id.rv_review);
 
         Intent intent = getIntent();
         if (intent == null) {
             return;
         }
-        //fetch video links
+
         movieSelected = intent.getParcelableExtra("MovieDetail");
         String movieIdString = String.valueOf(movieSelected.getId());
+
+        //fetch trailer links
         new GetTrailerLinkTask(this).execute(movieIdString);
 
-        //set up recycler view for trailer
-        LinearLayoutManager layoutManager =
+        //fetch movie review
+        new GetReviewTask(this).execute(movieIdString);
+
+        //set up trailer recycler view
+        LinearLayoutManager trailerLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        trailerRecyclerView.setLayoutManager(layoutManager);
+        trailerRecyclerView.setLayoutManager(trailerLayoutManager);
         trailerRecyclerView.setHasFixedSize(true);
+
         trailerAdapter = new TrailerAdapter(this);
         trailerRecyclerView.setAdapter(trailerAdapter);
 
-        // TODO: 6/14/2017 fetch reviews
+        //set up movie review recycler view
+        LinearLayoutManager reviewLayoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
+        reviewRecyclerView.setNestedScrollingEnabled(false);
+        reviewAdapter = new ReviewAdapter();
+        reviewRecyclerView.setAdapter(reviewAdapter);
+
+
+        // TODO: 6/19/2017 need to get trailer thunbnail for trailer recycler view
 
         String originalTitle = movieSelected.getOriginalTitle();
         movieTitle.setText(originalTitle);
@@ -93,13 +115,18 @@ public class MovieDetailActivity extends AppCompatActivity
      * @param trailerLinks  videos urls
      */
     @Override
-    public void onTrailerLinkAvailable(String[] trailerLinks) {
-        //save the trailer paths
-        mTrailer = new Trailer(null, null, trailerLinks);
-        movieSelected.setTrailerLinks(mTrailer);
+    public void onTrailerDataAvailable(String[] trailerLinks) {
+//        //save the trailer paths
+//        mTrailer = new Trailer(null, null, trailerLinks);
+//        movieSelected.setTrailerLinks(mTrailer);
 
         trailerAdapter.setTrailerData(trailerLinks);
 
+    }
+
+    @Override
+    public void onReviewAvailable(List<Review> reviewList) {
+        reviewAdapter.setReviewData(reviewList);
     }
 
     @Override

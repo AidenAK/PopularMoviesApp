@@ -4,12 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.doelay.android.popularmoviesapp.model.Trailer;
 import com.doelay.android.popularmoviesapp.utils.JsonUtils;
 import com.doelay.android.popularmoviesapp.utils.NetworkUtils;
 import com.doelay.android.popularmoviesapp.TMDb;
 import java.net.URL;
-import java.util.List;
 
 
 /**
@@ -21,14 +19,14 @@ public class GetTrailerLinkTask extends AsyncTask <String, Void, String[]> {
 
     private static final String TAG = GetTrailerLinkTask.class.getSimpleName();
 
-    private final OnDataAvailable mCallback;
+    private final OnTrailerDataAvailable mCallback;
 
-    public interface OnDataAvailable {
-        void onTrailerLinkAvailable(String[] trailerLinks);
+    public interface OnTrailerDataAvailable {
+        void onTrailerDataAvailable(String[] trailerLinks);
     }
 
     public GetTrailerLinkTask(Context context) {
-        mCallback = (OnDataAvailable) context;
+        mCallback = (OnTrailerDataAvailable) context;
     }
 
     @Override
@@ -54,6 +52,6 @@ public class GetTrailerLinkTask extends AsyncTask <String, Void, String[]> {
     @Override
     protected void onPostExecute(String[] trailerLink) {
         Log.d(TAG, "onPostExecute: " + trailerLink);
-        mCallback.onTrailerLinkAvailable(trailerLink);
+        mCallback.onTrailerDataAvailable(trailerLink);
     }
 }

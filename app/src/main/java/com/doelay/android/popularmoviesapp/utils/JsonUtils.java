@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.doelay.android.popularmoviesapp.TMDb;
 import com.doelay.android.popularmoviesapp.model.Movies;
+import com.doelay.android.popularmoviesapp.model.Review;
 import com.doelay.android.popularmoviesapp.model.Trailer;
 
 import org.json.JSONArray;
@@ -65,12 +66,31 @@ public final class JsonUtils {
 
         for (int i=0; i < resultArray.length(); i++) {
             JSONObject trailerObject = resultArray.getJSONObject(i);
+//            String name = trailerObject.getString("name");
             String key = trailerObject.getString("key");
 
             trailerPath[i] = buildTrailerUri(key);
             Log.d(TAG, "parseJsonForTrailer: "+ trailerPath[i]);
         }
         return trailerPath;
+    }
+
+    public static List parseJsonForReview(String jsonString)
+            throws JSONException{
+        List<Review> reviewList = new ArrayList<>();
+
+        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONArray resultArray = jsonObject.getJSONArray("results");
+
+        for(int i=0; i < resultArray.length(); i++) {
+            JSONObject reviewObject = resultArray.getJSONObject(i);
+            String author = reviewObject.getString("author");
+            String content = reviewObject.getString("content");
+
+            Review review = new Review(author, content);
+            reviewList.add(review);
+        }
+        return reviewList;
     }
 
     /**
