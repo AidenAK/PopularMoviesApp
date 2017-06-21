@@ -8,4 +8,5 @@
     <string name="trailer">Trailer</string>
     <string name="comment">Comment</string>
     <string name="favorite">Favorite</string>
+    <string name="no_favorite">No favorite movie. Please add some!</string>
 </resources>
