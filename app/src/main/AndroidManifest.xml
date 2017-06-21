@@ -26,6 +26,7 @@
             <!--<meta-data-->
                 <!--android:name="android.support.PARENT_ACTIVITY"-->
                 <!--android:resource=".MainActivity"/>-->
+        <activity android:name=".activity.FavoriteMovieActivity"/>
 
         <provider
             android:name="com.doelay.android.popularmoviesapp.db.MoviesProvider"

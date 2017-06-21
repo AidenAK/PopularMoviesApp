@@ -72,6 +72,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_rating :
                 new FetchMoviesDataTask().execute(TMDb.TOP_RATED);
                 return true;
+            case R.id.action_favorite :
+                Intent intent = new Intent(this, FavoriteMovieActivity.class);
+                startActivity(intent);
+
             default:
                 return super.onOptionsItemSelected(item);
         }
