@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
 public class MoivesContract {
 
     public static final String AUTHORITY = "com.doelay.android.popularmoviesapp";
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content//" + AUTHORITY);
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     public static final String PATH_FAVORITE_MOVIES = "FavoriteMovies";
 
     public static final class MoviesEntry implements BaseColumns {

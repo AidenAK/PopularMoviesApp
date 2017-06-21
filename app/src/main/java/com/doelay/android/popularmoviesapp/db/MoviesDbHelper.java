@@ -22,7 +22,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
         final String CREATE_TABLE = "CREATE TABLE " + MoivesContract.MoviesEntry.TABLE_NAME + " (" +
                 MoivesContract.MoviesEntry.MOVIE_ID + " INTEGER PRIMARY KEY, " +
                 MoivesContract.MoviesEntry.MOVIE_TITLE + " TEXT NOT NULL, " +
-                MoivesContract.MoviesEntry.MOVIE_OVERVIEW + " TEXT NOT NULL, " +
+                MoivesContract.MoviesEntry.MOVIE_OVERVIEW + " TEXT, " +
                 MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
                 MoivesContract.MoviesEntry.MOVIE_POSTER_PATH + " TEXT NOT NULL);";
         sqLiteDatabase.execSQL(CREATE_TABLE);

@@ -21,7 +21,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     private String[] trailerLinks;
 
     public interface OnTrailerSelectedListener {
-        void onTrailerSelected();
+        void onTrailerSelected(int position);
     }
 
     public TrailerAdapter (Context context) {
@@ -71,7 +71,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
-            // TODO: 6/19/2017 open the trailer selected.
+            callback.onTrailerSelected(adapterPosition);
         }
     }
 }

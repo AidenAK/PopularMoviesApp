@@ -10,12 +10,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by doelay on 6/13/2017.
  */
 
 public class MoviesProvider extends ContentProvider {
+
+    private static final String TAG = MoviesProvider.class.getSimpleName();
 
     private static final int FAVORITE_MOVIES = 500;
     private static final int FAVORITE_MOVIES_WITH_ID = 501;
@@ -35,7 +38,6 @@ public class MoviesProvider extends ContentProvider {
                 MoivesContract.AUTHORITY,
                 MoivesContract.PATH_FAVORITE_MOVIES + "/#",
                 FAVORITE_MOVIES_WITH_ID);
-
         return uriMatcher;
     }
 
@@ -55,6 +57,8 @@ public class MoviesProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         final SQLiteDatabase db = mMoviesDbHelper.getWritableDatabase();
         Uri returnUri;
+        Log.d(TAG, "buildUriMatcher: "+ sUriMatcher.toString());
+
         int match = sUriMatcher.match(uri);
         switch(match) {
             case FAVORITE_MOVIES:

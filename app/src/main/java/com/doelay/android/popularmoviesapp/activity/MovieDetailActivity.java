@@ -1,15 +1,24 @@
 package com.doelay.android.popularmoviesapp.activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import com.doelay.android.popularmoviesapp.R;
 import com.doelay.android.popularmoviesapp.adapter.ReviewAdapter;
 import com.doelay.android.popularmoviesapp.adapter.TrailerAdapter;
+import com.doelay.android.popularmoviesapp.db.MoivesContract;
 import com.doelay.android.popularmoviesapp.model.Movies;
 import com.doelay.android.popularmoviesapp.model.Review;
 import com.doelay.android.popularmoviesapp.model.Trailer;
@@ -36,12 +45,17 @@ public class MovieDetailActivity extends AppCompatActivity
     private TrailerAdapter trailerAdapter;
     private RecyclerView reviewRecyclerView;
     private ReviewAdapter reviewAdapter;
+    private String[] trailerLinks;
+    private ToggleButton favoriteButton;
+
+    // TODO: 6/20/2017 need to check if the movie is in favorite
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
+        //find UI elements
         movieTitle = (TextView) findViewById(R.id.tv_movie_title);
         voteAverage = (TextView) findViewById(R.id.tv_vote_average);
         releaseDate = (TextView) findViewById(R.id.tv_release_date);
@@ -50,7 +64,40 @@ public class MovieDetailActivity extends AppCompatActivity
         backdrop = (ImageView) findViewById(R.id.iv_backdrop);
         trailerRecyclerView = (RecyclerView) findViewById(R.id.rv_trailer_view);
         reviewRecyclerView = (RecyclerView) findViewById(R.id.rv_review);
+        favoriteButton = (ToggleButton) findViewById(R.id.tb_favorite_star);
+        favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
 
+                    ContentValues values = new ContentValues();
+                    values.put(MoivesContract.MoviesEntry.MOVIE_ID, movieSelected.getId());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_TITLE, movieSelected.getOriginalTitle());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_OVERVIEW, movieSelected.getOverview());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE, movieSelected.getReleaseDate());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_POSTER_PATH, movieSelected.getPosterPath());
+
+                    Uri uri = getContentResolver().insert(MoivesContract.MoviesEntry.CONTENT_URI, values);
+                    
+                    if( uri != null) {
+                        Toast.makeText(MovieDetailActivity.this,
+                                "Added to favorites", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+
+                    String movieIdString = String.valueOf(movieSelected.getId());
+                    Uri uri = MoivesContract.MoviesEntry.CONTENT_URI;
+                    uri = uri.buildUpon().appendPath(movieIdString).build();
+                    Log.d(TAG, "onCheckedChanged: "+ uri);
+                    int rowDeleted = getContentResolver().delete(uri, null, null);
+
+                    if(rowDeleted != 0) {
+                        Toast.makeText(MovieDetailActivity.this, "Removed from favorites",Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            }
+        });
         Intent intent = getIntent();
         if (intent == null) {
             return;
@@ -83,8 +130,8 @@ public class MovieDetailActivity extends AppCompatActivity
         reviewRecyclerView.setAdapter(reviewAdapter);
 
 
-        // TODO: 6/19/2017 need to get trailer thunbnail for trailer recycler view
-
+        // TODO: 6/19/2017 need to get trailer thumbnail for trailer recycler view
+        //display UI elements
         String originalTitle = movieSelected.getOriginalTitle();
         movieTitle.setText(originalTitle);
 
@@ -107,7 +154,10 @@ public class MovieDetailActivity extends AppCompatActivity
                 .load(backdropLink)
                 .into(backdrop);
 
+
+
     }
+
 
     /**
      * A callback after the trailer links are downloaded.
@@ -119,7 +169,7 @@ public class MovieDetailActivity extends AppCompatActivity
 //        //save the trailer paths
 //        mTrailer = new Trailer(null, null, trailerLinks);
 //        movieSelected.setTrailerLinks(mTrailer);
-
+        this.trailerLinks = trailerLinks;
         trailerAdapter.setTrailerData(trailerLinks);
 
     }
@@ -130,7 +180,12 @@ public class MovieDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onTrailerSelected() {
+    public void onTrailerSelected(int position) {
+        Uri trailerUri = Uri.parse(trailerLinks[position]);
+        Intent intent = new Intent(Intent.ACTION_VIEW, trailerUri);
 
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
