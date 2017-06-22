@@ -2,6 +2,7 @@ package com.doelay.android.popularmoviesapp.activity;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,6 +22,7 @@ import com.doelay.android.popularmoviesapp.R;
 import com.doelay.android.popularmoviesapp.TMDb;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,16 +30,24 @@ public class MainActivity extends AppCompatActivity
         implements MovieAdapter.OnMovieSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String MOVIE_RECYCLER_VIEW_STATE = "movie_recycler_view_state";
+    public static final String DOWNLOADED_MOVIE_LIST = "downloaded_movie_list";
+
     private MovieAdapter movieAdapter;
     private ProgressBar loadingBar;
     private TextView errorMessage;
     private RecyclerView movieRecyclerView;
+    private GridLayoutManager gridLayoutManager;
+    private Parcelable recyclerViewState;
+    private List<Movies> downloadedMovieList;
 
 
     // TODO: 5/17/2017 Save the data on screen rotation
     // TODO: 5/17/2017 layout for landscape with more than 2 columns
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -45,15 +55,55 @@ public class MainActivity extends AppCompatActivity
         errorMessage = (TextView) findViewById(R.id.tv_error_message);
         loadingBar = (ProgressBar) findViewById(R.id.pb_loading);
 
-        GridLayoutManager gridLayoutManager
-                = new GridLayoutManager(MainActivity.this,2);
+        gridLayoutManager = new GridLayoutManager(MainActivity.this,2);
         movieRecyclerView.setLayoutManager(gridLayoutManager);
 
         movieRecyclerView.setHasFixedSize(true);
 
         movieAdapter = new MovieAdapter(this);
         movieRecyclerView.setAdapter(movieAdapter);
-        loadMovieData();
+
+        if (savedInstanceState == null) {
+            loadMovieData();
+        } else {
+            //retrieve movie list and pass it to the adapter
+            List<Movies> list = savedInstanceState.getParcelableArrayList(DOWNLOADED_MOVIE_LIST);
+            downloadedMovieList = list;
+            movieAdapter.setMovieData(list);
+            //retrieve recycler scroll position
+            recyclerViewState = savedInstanceState.getParcelable(MOVIE_RECYCLER_VIEW_STATE);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState: called");
+        super.onSaveInstanceState(outState);
+        //save the scroll position of the recycler view
+        recyclerViewState = gridLayoutManager.onSaveInstanceState();
+        outState.putParcelable(MOVIE_RECYCLER_VIEW_STATE, recyclerViewState);
+        //save the downloaded movie list
+        outState.putParcelableArrayList(DOWNLOADED_MOVIE_LIST, (ArrayList<Movies>) downloadedMovieList);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, "onRestoreInstanceState: called");
+        super.onRestoreInstanceState(savedInstanceState);
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume: called");
+        super.onResume();
+        //restore the scroll position
+        if (recyclerViewState != null) {
+            gridLayoutManager.onRestoreInstanceState(recyclerViewState);
+        }
     }
 
     @Override
@@ -102,7 +152,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMovieSelectedListener(Movies movieSelected) {
 
-
         Intent intentToStartMovieDetailActivity = new Intent(this, MovieDetailActivity.class);
         intentToStartMovieDetailActivity.putExtra("MovieDetail", movieSelected);
         startActivity(intentToStartMovieDetailActivity);
@@ -139,6 +188,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(List<Movies> movieList) {
             if (movieList != null) {
+                downloadedMovieList = movieList;
                 loadingBar.setVisibility(View.INVISIBLE);
                 movieAdapter.setMovieData(movieList);
             } else {
