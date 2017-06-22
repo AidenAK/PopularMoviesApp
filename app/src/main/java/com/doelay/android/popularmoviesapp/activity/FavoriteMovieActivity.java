@@ -2,6 +2,7 @@ package com.doelay.android.popularmoviesapp.activity;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -26,33 +27,63 @@ public class FavoriteMovieActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = FavoriteMovieActivity.class.getSimpleName();
+
+    public static final String FAVORITE_RECYCLER_VIEW_STATE = "favorite_recycler_view_state";
     private static final int FAVORITE_MOVIE_LOADER_ID = 1;
 
     private FavoriteMovieAdapter mFavoriteMovieAdapter;
     private RecyclerView favoriteMovieRecyclerView;
+    private LinearLayoutManager recyclerLayoutManager;
     private TextView noFavorite;
+    private Parcelable recyclerState;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_favorite);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         noFavorite = (TextView) findViewById(R.id.tv_no_favorite);
 
         favoriteMovieRecyclerView = (RecyclerView) findViewById(R.id.rv_favorite_movies);
-        favoriteMovieRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerLayoutManager = new LinearLayoutManager(this);
+        favoriteMovieRecyclerView.setLayoutManager(recyclerLayoutManager);
         mFavoriteMovieAdapter = new FavoriteMovieAdapter();
         favoriteMovieRecyclerView.setAdapter(mFavoriteMovieAdapter);
 
         getSupportLoaderManager().initLoader(FAVORITE_MOVIE_LOADER_ID, null, this);
+
+        if(savedInstanceState != null) {
+            recyclerState = savedInstanceState.getParcelable(FAVORITE_RECYCLER_VIEW_STATE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        recyclerState = recyclerLayoutManager.onSaveInstanceState();
+        outState.putParcelable(FAVORITE_RECYCLER_VIEW_STATE, recyclerState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         getSupportLoaderManager().restartLoader(FAVORITE_MOVIE_LOADER_ID, null, this);
+        if (recyclerState != null) {
+            recyclerLayoutManager.onRestoreInstanceState(recyclerState);
+        }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -63,8 +94,6 @@ public class FavoriteMovieActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
