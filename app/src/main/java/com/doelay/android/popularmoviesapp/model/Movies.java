@@ -58,9 +58,10 @@ public class Movies implements Parcelable {
         Bundle linkBundle = in.readBundle(getClass().getClassLoader());
         trailerLinks = linkBundle.getParcelable("trailerPath");
 
-        List<Review> reviewList = new ArrayList<>();
-        in.readList(reviewList, null);
-
+//        Bundle reviewBundle = in.readBundle(getClass().getClassLoader());
+//        review = reviewBundle.getParcelableArrayList("review");
+        review = new ArrayList<Review>();
+        in.readTypedList(review, Review.CREATOR);
     }
     @Override
     public int describeContents() {
@@ -83,6 +84,9 @@ public class Movies implements Parcelable {
         linkBundle.putParcelable("trailerPath", trailerLinks);
         out.writeBundle(linkBundle);
 
+//        Bundle reviewBundle = new Bundle();
+//        reviewBundle.putParcelableArrayList("review", (ArrayList<Review>) review);
+//        out.writeBundle(reviewBundle);
         out.writeList(review);
 }
 
