@@ -2,6 +2,7 @@ package com.doelay.android.popularmoviesapp.activity;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -49,8 +50,8 @@ public class MovieDetailActivity extends AppCompatActivity
     private ReviewAdapter reviewAdapter;
     private String[] trailerLinks;
     private ToggleButton favoriteButton;
+    private String movieIdString;
 
-    // TODO: 6/20/2017 need to check if the movie is in favorite
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,46 +68,20 @@ public class MovieDetailActivity extends AppCompatActivity
         trailerRecyclerView = (RecyclerView) findViewById(R.id.rv_trailer_view);
         reviewRecyclerView = (RecyclerView) findViewById(R.id.rv_review);
         favoriteButton = (ToggleButton) findViewById(R.id.tb_favorite_star);
-        favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
 
-                    ContentValues values = new ContentValues();
-                    values.put(MoivesContract.MoviesEntry.MOVIE_ID, movieSelected.getId());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_TITLE, movieSelected.getOriginalTitle());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_OVERVIEW, movieSelected.getOverview());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE, movieSelected.getReleaseDate());
-                    values.put(MoivesContract.MoviesEntry.MOVIE_POSTER_PATH, movieSelected.getPosterPath());
 
-                    Uri uri = getContentResolver().insert(MoivesContract.MoviesEntry.CONTENT_URI, values);
-                    
-                    if( uri != null) {
-                        Toast.makeText(MovieDetailActivity.this,
-                                "Added to favorites", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
 
-                    String movieIdString = String.valueOf(movieSelected.getId());
-                    Uri uri = MoivesContract.MoviesEntry.CONTENT_URI;
-                    uri = uri.buildUpon().appendPath(movieIdString).build();
-                    Log.d(TAG, "onCheckedChanged: "+ uri);
-                    int rowDeleted = getContentResolver().delete(uri, null, null);
-
-                    if(rowDeleted != 0) {
-                        Toast.makeText(MovieDetailActivity.this, "Removed from favorites",Toast.LENGTH_SHORT).show();
-
-                    }
-                }
-            }
-        });
         Intent intent = getIntent();
         if (intent == null) {
             return;
+        } else {
+            movieSelected = intent.getParcelableExtra("MovieDetail");
+            movieIdString = String.valueOf(movieSelected.getId());
         }
 
-        movieSelected = intent.getParcelableExtra("MovieDetail");
-        String movieIdString = String.valueOf(movieSelected.getId());
+        favoriteButton.setChecked(isFavorite(movieIdString));//check whether it is favorite
+        setFavoriteButtonListener();
+
 
         //fetch trailer links
         new GetTrailerLinkTask(this).execute(movieIdString);
@@ -155,9 +130,6 @@ public class MovieDetailActivity extends AppCompatActivity
         Picasso.with(this)
                 .load(backdropLink)
                 .into(backdrop);
-
-
-
     }
 
     @Override
@@ -176,6 +148,62 @@ public class MovieDetailActivity extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean isFavorite(String movieId) {
+        Cursor cursor = getContentResolver().query(
+                buildUriWithMovieId(),
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        if(cursor == null) {
+            return false;
+        }
+        Log.d(TAG, "isFavorite: "+ cursor.getCount());
+        return true;
+    }
+
+    private void setFavoriteButtonListener() {
+        favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+
+                    ContentValues values = new ContentValues();
+                    values.put(MoivesContract.MoviesEntry.MOVIE_ID, movieSelected.getId());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_TITLE, movieSelected.getOriginalTitle());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_OVERVIEW, movieSelected.getOverview());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE, movieSelected.getReleaseDate());
+                    values.put(MoivesContract.MoviesEntry.MOVIE_POSTER_PATH, movieSelected.getPosterPath());
+
+                    Uri uri = getContentResolver().insert(MoivesContract.MoviesEntry.CONTENT_URI, values);
+
+                    if( uri != null) {
+                        Toast.makeText(MovieDetailActivity.this,
+                                "Added to favorites", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+
+                    int rowDeleted = getContentResolver().delete(buildUriWithMovieId(), null, null);
+                    Log.d(TAG, "onCheckedChanged: "+ buildUriWithMovieId());
+                    if(rowDeleted != 0) {
+                        Toast.makeText(MovieDetailActivity.this, "Removed from favorites",Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            }
+        });
+    }
+
+    private Uri buildUriWithMovieId() {
+
+        Uri uri = MoivesContract.MoviesEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(movieIdString).build();
+
+        return uri;
     }
 
     /**

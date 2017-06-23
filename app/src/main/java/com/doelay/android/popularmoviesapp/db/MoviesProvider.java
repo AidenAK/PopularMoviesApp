@@ -92,6 +92,17 @@ public class MoviesProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
+            case FAVORITE_MOVIES_WITH_ID:
+                String movieIdString = uri.getLastPathSegment();
+                returnCursor = db.query(
+                        MoivesContract.MoviesEntry.TABLE_NAME,
+                        null,
+                        "movie_id=?",
+                        new String[] {movieIdString},
+                        null,
+                        null,
+                        null);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown Uri: "+ uri);
         }
