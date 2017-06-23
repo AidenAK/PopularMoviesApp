@@ -50,6 +50,7 @@ public final class JsonUtils {
                             rating,
                             posterUri,
                             movieId,
+                            null,
                             null);
             moviesList.add(movie);
         }

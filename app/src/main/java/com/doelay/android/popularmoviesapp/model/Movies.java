@@ -22,6 +22,7 @@ public class Movies implements Parcelable {
     private String posterPath;
     private long id;
     private Trailer trailerLinks;
+    private List<Review> review;
 
 
     public Movies(String originalTitle,
@@ -30,7 +31,8 @@ public class Movies implements Parcelable {
                   double rating,
                   String posterPath,
                   long id,
-                  Trailer links) {
+                  Trailer links,
+                  List<Review> review) {
 
         this.originalTitle = originalTitle;
         this.overview = overview;
@@ -39,6 +41,7 @@ public class Movies implements Parcelable {
         this.posterPath = posterPath;
         this.id = id;
         this.trailerLinks = links;
+        this.review = review;
     }
 
     /**
@@ -52,8 +55,12 @@ public class Movies implements Parcelable {
         posterPath = in.readString();
         id = in.readLong();
 
-        Bundle bundle = in.readBundle(getClass().getClassLoader());
-        trailerLinks = bundle.getParcelable("trailerPath");
+        Bundle linkBundle = in.readBundle(getClass().getClassLoader());
+        trailerLinks = linkBundle.getParcelable("trailerPath");
+
+        List<Review> reviewList = new ArrayList<>();
+        in.readList(reviewList, null);
+
     }
     @Override
     public int describeContents() {
@@ -72,9 +79,11 @@ public class Movies implements Parcelable {
         out.writeString(posterPath);
         out.writeLong(id);
 
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("trailerPath", trailerLinks);
-        out.writeBundle(bundle);
+        Bundle linkBundle = new Bundle();
+        linkBundle.putParcelable("trailerPath", trailerLinks);
+        out.writeBundle(linkBundle);
+
+        out.writeList(review);
 }
 
     /**
@@ -118,8 +127,12 @@ public class Movies implements Parcelable {
         return id;
     }
 
-    public Trailer getTrailerLinks() {
+    public Trailer getTrailer() {
         return trailerLinks;
+    }
+
+    public List<Review> getReview() {
+        return review;
     }
 
     public void setOriginalTitle(String originalTitle) {
@@ -146,8 +159,12 @@ public class Movies implements Parcelable {
         this.id = id;
     }
 
-    public void setTrailerLinks(Trailer links) {
+    public void setTrailer(Trailer links) {
         this.trailerLinks = links;
+    }
+
+    public void setReview(List<Review> review) {
+        this.review = review;
     }
 
 }

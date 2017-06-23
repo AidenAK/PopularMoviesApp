@@ -1,6 +1,7 @@
 package com.doelay.android.popularmoviesapp.activity;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,12 +29,14 @@ import com.doelay.android.popularmoviesapp.task.GetReviewTask;
 import com.doelay.android.popularmoviesapp.task.GetTrailerLinkTask;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDetailActivity extends AppCompatActivity
         implements GetTrailerLinkTask.OnTrailerDataAvailable, TrailerAdapter.OnTrailerSelectedListener, GetReviewTask.OnReviewAvailable {
 
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
+    private static final String MOVIE_SELECTED = "movie_selected";
 
     private TextView movieTitle;
     private TextView voteAverage;
@@ -43,14 +45,17 @@ public class MovieDetailActivity extends AppCompatActivity
     private ImageView moviePoster;
     private ImageView backdrop;
     private Movies movieSelected;
-    private Trailer mTrailer;
+    private Trailer trailer;
     private RecyclerView trailerRecyclerView;
     private TrailerAdapter trailerAdapter;
     private RecyclerView reviewRecyclerView;
     private ReviewAdapter reviewAdapter;
     private String[] trailerLinks;
+    private List<Review> reviewList;
     private ToggleButton favoriteButton;
     private String movieIdString;
+    LinearLayoutManager trailerLayoutManager;
+    LinearLayoutManager reviewLayoutManager;
 
 
     @Override
@@ -69,43 +74,39 @@ public class MovieDetailActivity extends AppCompatActivity
         reviewRecyclerView = (RecyclerView) findViewById(R.id.rv_review);
         favoriteButton = (ToggleButton) findViewById(R.id.tb_favorite_star);
 
-
-
-        Intent intent = getIntent();
-        if (intent == null) {
-            return;
-        } else {
-            movieSelected = intent.getParcelableExtra("MovieDetail");
-            movieIdString = String.valueOf(movieSelected.getId());
-        }
-
-        favoriteButton.setChecked(isFavorite(movieIdString));//check whether it is favorite
-        setFavoriteButtonListener();
-
-
-        //fetch trailer links
-        new GetTrailerLinkTask(this).execute(movieIdString);
-
-        //fetch movie review
-        new GetReviewTask(this).execute(movieIdString);
-
         //set up trailer recycler view
-        LinearLayoutManager trailerLayoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        trailerRecyclerView.setLayoutManager(trailerLayoutManager);
-        trailerRecyclerView.setHasFixedSize(true);
-
-        trailerAdapter = new TrailerAdapter(this);
-        trailerRecyclerView.setAdapter(trailerAdapter);
+        initializeTrailerRecyclerView();
 
         //set up movie review recycler view
-        LinearLayoutManager reviewLayoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
-        reviewRecyclerView.setNestedScrollingEnabled(false);
-        reviewAdapter = new ReviewAdapter();
-        reviewRecyclerView.setAdapter(reviewAdapter);
+        initializeReviewRecyclerView();
 
+        //check for saved instance
+        if(savedInstanceState == null) {
+            Intent intent = getIntent();
+            if (intent == null) {
+                return;
+            } else {
+                movieSelected = intent.getParcelableExtra("MovieDetail");
+                movieIdString = String.valueOf(movieSelected.getId());
+                //fetch trailer links
+                new GetTrailerLinkTask(this).execute(movieIdString);
+                //fetch movie review
+                new GetReviewTask(this).execute(movieIdString);
+            }
+        } else {
+
+            movieSelected = savedInstanceState.getParcelable(MOVIE_SELECTED);//retrieve the object
+            movieIdString = String.valueOf(movieSelected.getId());
+            //get the trailer paths
+            Trailer trailer = movieSelected.getTrailer();
+            trailerAdapter.setTrailerData(trailer.getTrailerPath());
+            //get the review
+            reviewAdapter.setReviewData(movieSelected.getReview());
+        }
+
+        //check whether it is favorite
+        favoriteButton.setChecked(isFavorite(movieIdString));
+        setFavoriteButtonListener();
 
         // TODO: 6/19/2017 need to get trailer thumbnail for trailer recycler view
         //display UI elements
@@ -133,6 +134,22 @@ public class MovieDetailActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(MOVIE_SELECTED, movieSelected);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_movie_detail, menu);
         return true;
@@ -150,6 +167,22 @@ public class MovieDetailActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void initializeTrailerRecyclerView() {
+        trailerLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        trailerRecyclerView.setLayoutManager(trailerLayoutManager);
+        trailerRecyclerView.setHasFixedSize(true);
+        trailerAdapter = new TrailerAdapter(MovieDetailActivity.this);
+        trailerRecyclerView.setAdapter(trailerAdapter);
+    }
+
+    private void initializeReviewRecyclerView() {
+        reviewLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        reviewRecyclerView.setLayoutManager(reviewLayoutManager);
+        reviewRecyclerView.setNestedScrollingEnabled(false);
+        reviewAdapter = new ReviewAdapter();
+        reviewRecyclerView.setAdapter(reviewAdapter);
+    }
+
     private boolean isFavorite(String movieId) {
         Cursor cursor = getContentResolver().query(
                 buildUriWithMovieId(),
@@ -158,11 +191,10 @@ public class MovieDetailActivity extends AppCompatActivity
                 null,
                 null,
                 null);
-
-        if(cursor == null) {
+        Log.d(TAG, "isFavorite: "+ cursor.getCount());
+        if(cursor.getCount() == 0) {
             return false;
         }
-        Log.d(TAG, "isFavorite: "+ cursor.getCount());
         return true;
     }
 
@@ -213,17 +245,14 @@ public class MovieDetailActivity extends AppCompatActivity
      */
     @Override
     public void onTrailerDataAvailable(String[] trailerLinks) {
-//        //save the trailer paths
-//        mTrailer = new Trailer(null, null, trailerLinks);
-//        movieSelected.setTrailerLinks(mTrailer);
+        Log.d(TAG, "onTrailerDataAvailable: called");
+        //save the trailer paths
+        trailer = new Trailer(null, null, trailerLinks);
+        movieSelected.setTrailer(trailer);
+        //pass the trailer to the adapter
         this.trailerLinks = trailerLinks;
         trailerAdapter.setTrailerData(trailerLinks);
 
-    }
-
-    @Override
-    public void onReviewAvailable(List<Review> reviewList) {
-        reviewAdapter.setReviewData(reviewList);
     }
 
     @Override
@@ -235,4 +264,15 @@ public class MovieDetailActivity extends AppCompatActivity
             startActivity(intent);
         }
     }
+
+    @Override
+    public void onReviewAvailable(List<Review> review) {
+        Log.d(TAG, "onReviewAvailable: called");
+        reviewList = new ArrayList<>();
+        movieSelected.setReview(reviewList);
+
+        this.reviewList = review;
+        reviewAdapter.setReviewData(review);
+    }
 }
+
