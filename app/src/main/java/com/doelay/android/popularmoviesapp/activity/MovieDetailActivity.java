@@ -268,10 +268,8 @@ public class MovieDetailActivity extends AppCompatActivity
     @Override
     public void onReviewAvailable(List<Review> review) {
         Log.d(TAG, "onReviewAvailable: called");
-        reviewList = new ArrayList<>();
-        movieSelected.setReview(reviewList);
 
-        this.reviewList = review;
+        movieSelected.setReview(review);
         reviewAdapter.setReviewData(review);
     }
 }
