@@ -83,15 +83,18 @@ public class MovieDetailActivity extends AppCompatActivity
         //check for saved instance
         if(savedInstanceState == null) {
             Intent intent = getIntent();
-            if (intent == null) {
+            Bundle extras = intent.getExtras();
+            if (extras == null) {
                 return;
             } else {
-                movieSelected = intent.getParcelableExtra("MovieDetail");
-                movieIdString = String.valueOf(movieSelected.getId());
-                //fetch trailer links
-                new GetTrailerLinkTask(this).execute(movieIdString);
-                //fetch movie review
-                new GetReviewTask(this).execute(movieIdString);
+                if (extras.containsKey("MovieDetail")) {
+                    movieSelected = intent.getParcelableExtra("MovieDetail");
+                    movieIdString = String.valueOf(movieSelected.getId());
+                    //fetch trailer links
+                    new GetTrailerLinkTask(this).execute(movieIdString);
+                    //fetch movie review
+                    new GetReviewTask(this).execute(movieIdString);
+                }
             }
         } else {
 
