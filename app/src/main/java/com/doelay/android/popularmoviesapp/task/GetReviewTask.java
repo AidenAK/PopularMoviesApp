@@ -17,14 +17,21 @@ import java.util.List;
 
 public class GetReviewTask extends AsyncTask<String, Void, List<Review>> {
 
-    private final OnReviewAvailable mCallback;
+    private OnReviewAvailable mCallback;
 
     public interface OnReviewAvailable {
         void onReviewAvailable(List<Review> reviewList);
     }
 
     public GetReviewTask (Context context) {
-        mCallback = (OnReviewAvailable) context;
+        try {
+            if (context instanceof OnReviewAvailable) {
+                mCallback = (OnReviewAvailable) context;
+            }
+        } catch (ClassCastException e) {
+            throw new ClassCastException();
+        }
+
     }
     @Override
     protected List doInBackground(String... movieId) {

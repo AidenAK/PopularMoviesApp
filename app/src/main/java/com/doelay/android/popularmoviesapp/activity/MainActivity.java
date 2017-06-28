@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.doelay.android.popularmoviesapp.model.Movies;
+import com.doelay.android.popularmoviesapp.task.FetchMoviesDataTask;
 import com.doelay.android.popularmoviesapp.utils.JsonUtils;
 import com.doelay.android.popularmoviesapp.adapter.MovieAdapter;
 import com.doelay.android.popularmoviesapp.utils.NetworkUtils;
@@ -27,7 +28,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-        implements MovieAdapter.OnMovieSelectedListener {
+        implements MovieAdapter.OnMovieSelectedListener, FetchMoviesDataTask.OnMoviesDataAvailable {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String MOVIE_RECYCLER_VIEW_STATE = "movie_recycler_view_state";
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity
     private List<Movies> downloadedMovieList;
 
 
-    // TODO: 5/17/2017 Save the data on screen rotation
     // TODO: 5/17/2017 layout for landscape with more than 2 columns
 
     @Override
@@ -117,10 +117,12 @@ public class MainActivity extends AppCompatActivity
         int menuItemClicked = item.getItemId();
         switch (menuItemClicked) {
             case R.id.action_popularity :
-                new FetchMoviesDataTask().execute(TMDb.POPULAR);
+                showLoadingBar();
+                new FetchMoviesDataTask(this).execute(TMDb.POPULAR);
                 return true;
             case R.id.action_rating :
-                new FetchMoviesDataTask().execute(TMDb.TOP_RATED);
+                showLoadingBar();
+                new FetchMoviesDataTask(this).execute(TMDb.TOP_RATED);
                 return true;
             case R.id.action_favorite :
                 Intent intent = new Intent(this, FavoriteMovieActivity.class);
@@ -137,7 +139,8 @@ public class MainActivity extends AppCompatActivity
      */
     private void loadMovieData() {
         showMovieData();
-        new FetchMoviesDataTask().execute(TMDb.POPULAR);
+        showLoadingBar();
+        new FetchMoviesDataTask(this).execute(TMDb.POPULAR);
     }
 
     private void showMovieData() {
@@ -147,6 +150,20 @@ public class MainActivity extends AppCompatActivity
     private void showErrorMessage() {
         movieRecyclerView.setVisibility(View.INVISIBLE);
         errorMessage.setVisibility(View.VISIBLE);
+    }
+    private void showLoadingBar() {
+        loadingBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onMoviesDataAvailable(List<Movies> movieList) {
+        if (movieList != null) {
+            downloadedMovieList = movieList;//save a copy for onSaveInstanceState()
+            loadingBar.setVisibility(View.INVISIBLE);
+            movieAdapter.setMovieData(movieList);
+        } else {
+            showErrorMessage();
+        }
     }
 
     @Override
@@ -158,44 +175,5 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public class FetchMoviesDataTask extends AsyncTask<String, Void, List<Movies>>{
 
-        @Override
-        protected void onPreExecute() {
-            loadingBar.setVisibility(View.VISIBLE);
-            super.onPreExecute();
-        }
-
-
-        @Override
-        protected List<Movies> doInBackground(String... strings) {
-
-            if (strings.length == 0){
-                return null;
-            }
-            try {
-                URL url = NetworkUtils.buildUrl(null, strings[0]);
-                String jsonString = NetworkUtils.getJsonData(url);
-                List moviesList = JsonUtils.parseJsonString( MainActivity.this, jsonString);
-                Log.d(TAG, "doInBackground: Movie list size "+ moviesList.size() );
-                return moviesList;
-            } catch (Exception e){
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<Movies> movieList) {
-            if (movieList != null) {
-                downloadedMovieList = movieList;
-                loadingBar.setVisibility(View.INVISIBLE);
-                movieAdapter.setMovieData(movieList);
-            } else {
-                showErrorMessage();
-            }
-
-
-        }
-    }
 }
