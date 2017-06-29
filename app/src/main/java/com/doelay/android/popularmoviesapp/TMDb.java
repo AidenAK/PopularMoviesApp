@@ -5,7 +5,7 @@ package com.doelay.android.popularmoviesapp;
  */
 
 public final class TMDb {
-    public static String API_KEY = "";
+    public static String API_KEY = BuildConfig.THE_MOVIE_DB_API_KEY;
     public static String TOP_RATED = "top_rated";
     public static String POPULAR = "popular";
     public static String BASE_URL = "https://api.themoviedb.org/3/movie";
