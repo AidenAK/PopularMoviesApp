@@ -138,7 +138,6 @@ public class MainActivity extends AppCompatActivity
      * Load the movie data when the app starts.
      */
     private void loadMovieData() {
-        showMovieData();
         showLoadingBar();
         new FetchMoviesDataTask(this).execute(TMDb.POPULAR);
     }
@@ -161,6 +160,7 @@ public class MainActivity extends AppCompatActivity
             downloadedMovieList = movieList;//save a copy for onSaveInstanceState()
             loadingBar.setVisibility(View.INVISIBLE);
             movieAdapter.setMovieData(movieList);
+            showMovieData();
         } else {
             showErrorMessage();
         }

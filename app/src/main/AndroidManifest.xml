@@ -23,7 +23,9 @@
 
         <activity
             android:name=".activity.MovieDetailActivity"
-            android:parentActivityName=".activity.MainActivity"/>
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppThemeNoBar"
+            android:label=""/>
             <!--<meta-data-->
                 <!--android:name="android.support.PARENT_ACTIVITY"-->
                 <!--android:resource=".MainActivity"/>-->

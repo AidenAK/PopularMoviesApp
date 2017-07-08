@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,11 +58,17 @@ public class MovieDetailActivity extends AppCompatActivity
     LinearLayoutManager trailerLayoutManager;
     LinearLayoutManager reviewLayoutManager;
 
-
+    // TODO: 6/29/2017 implement a collaspsing toolbar layout
+    // TODO: 6/29/2017 edit scroll view
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //find UI elements
         movieTitle = (TextView) findViewById(R.id.tv_movie_title);
@@ -136,6 +143,7 @@ public class MovieDetailActivity extends AppCompatActivity
                 .into(backdrop);
     }
 
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -164,9 +172,13 @@ public class MovieDetailActivity extends AppCompatActivity
         if (id == R.id.action_favorite) {
             Intent intent = new Intent(this, FavoriteMovieActivity.class);
             startActivity(intent);
-
             return true;
         }
+        if(id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

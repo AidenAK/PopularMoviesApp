@@ -31,6 +31,7 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        //better not use DROP
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MoivesContract.MoviesEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
