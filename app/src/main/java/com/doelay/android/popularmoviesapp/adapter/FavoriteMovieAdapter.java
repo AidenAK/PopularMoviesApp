@@ -26,11 +26,16 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
     @Override
     public void onBindViewHolder(FavoriteMovieViewHolder holder, int position) {
+        //get the column name
         int titleIndex = mCursor.getColumnIndex(MoivesContract.MoviesEntry.MOVIE_TITLE);
+        int movieIdIndex = mCursor.getColumnIndex(MoivesContract.MoviesEntry.MOVIE_ID);
 
         mCursor.moveToPosition(position);
+
         String movieTitle = mCursor.getString(titleIndex);
         holder.favoriteMovieTitle.setText(movieTitle);
+        int movieId = mCursor.getInt(movieIdIndex);
+        holder.itemView.setTag(movieId);
     }
 
     @Override

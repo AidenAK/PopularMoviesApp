@@ -1,6 +1,7 @@
 package com.doelay.android.popularmoviesapp.activity;
 
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +24,7 @@ import com.doelay.android.popularmoviesapp.db.MoivesContract;
 /**
  * Created by doelay on 6/20/2017.
  */
-
+// TODO: 7/8/2017 add remove from favorite functionality
 public class FavoriteMovieActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -50,6 +52,26 @@ public class FavoriteMovieActivity extends AppCompatActivity
         favoriteMovieRecyclerView.setLayoutManager(recyclerLayoutManager);
         mFavoriteMovieAdapter = new FavoriteMovieAdapter();
         favoriteMovieRecyclerView.setAdapter(mFavoriteMovieAdapter);
+
+        //add swipe listener
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int movieId = (int) viewHolder.itemView.getTag();
+
+                String movieIdString = Integer.toString(movieId);
+                Uri uri = MoivesContract.MoviesEntry.CONTENT_URI;
+                uri = uri.buildUpon().appendPath(movieIdString).build();
+
+                getContentResolver().delete(uri, null, null);
+                getSupportLoaderManager().restartLoader(FAVORITE_MOVIE_LOADER_ID, null, FavoriteMovieActivity.this);
+            }
+        }).attachToRecyclerView(favoriteMovieRecyclerView);
 
         getSupportLoaderManager().initLoader(FAVORITE_MOVIE_LOADER_ID, null, this);
 
