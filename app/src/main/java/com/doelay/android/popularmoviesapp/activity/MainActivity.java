@@ -1,6 +1,7 @@
 package com.doelay.android.popularmoviesapp.activity;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -55,7 +56,12 @@ public class MainActivity extends AppCompatActivity
         errorMessage = (TextView) findViewById(R.id.tv_error_message);
         loadingBar = (ProgressBar) findViewById(R.id.pb_loading);
 
-        gridLayoutManager = new GridLayoutManager(MainActivity.this,2);
+        //set the number of column
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            gridLayoutManager = new GridLayoutManager(MainActivity.this,2);
+        } else {
+            gridLayoutManager = new GridLayoutManager(MainActivity.this,3);
+        }
         movieRecyclerView.setLayoutManager(gridLayoutManager);
 
         movieRecyclerView.setHasFixedSize(true);
