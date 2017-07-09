@@ -44,6 +44,9 @@ public final class JsonUtils {
 
             long movieId = movieObject.getLong("id");
 
+            String backdropPath = movieObject.getString("backdrop_path");
+            String backdropUri = buildPosterUri(backdropPath);
+
             Movies movie = new Movies(originalTitle,
                             overview,
                             releaseDate,
@@ -51,7 +54,8 @@ public final class JsonUtils {
                             posterUri,
                             movieId,
                             null,
-                            null);
+                            null,
+                            backdropUri);
             moviesList.add(movie);
         }
         return moviesList;

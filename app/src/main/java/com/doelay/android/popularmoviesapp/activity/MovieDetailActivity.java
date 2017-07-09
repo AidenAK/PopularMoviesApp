@@ -137,7 +137,7 @@ public class MovieDetailActivity extends AppCompatActivity
                 .load(posterPath)
                 .into(moviePoster);
 
-        String backdropLink = movieSelected.getPosterPath();
+        String backdropLink = movieSelected.getBackdropPath();
         Picasso.with(this)
                 .load(backdropLink)
                 .into(backdrop);

@@ -23,6 +23,7 @@ public class Movies implements Parcelable {
     private long id;
     private Trailer trailerLinks;
     private List<Review> review;
+    private String backdropPath;
 
 
     public Movies(String originalTitle,
@@ -32,7 +33,8 @@ public class Movies implements Parcelable {
                   String posterPath,
                   long id,
                   Trailer links,
-                  List<Review> review) {
+                  List<Review> review,
+                  String backdropPath) {
 
         this.originalTitle = originalTitle;
         this.overview = overview;
@@ -42,6 +44,7 @@ public class Movies implements Parcelable {
         this.id = id;
         this.trailerLinks = links;
         this.review = review;
+        this.backdropPath = backdropPath;
     }
 
     /**
@@ -62,6 +65,8 @@ public class Movies implements Parcelable {
 //        review = reviewBundle.getParcelableArrayList("review");
         review = new ArrayList<Review>();
         in.readTypedList(review, Review.CREATOR);
+
+        backdropPath = in.readString();
     }
     @Override
     public int describeContents() {
@@ -88,6 +93,7 @@ public class Movies implements Parcelable {
 //        reviewBundle.putParcelableArrayList("review", (ArrayList<Review>) review);
 //        out.writeBundle(reviewBundle);
         out.writeList(review);
+        out.writeString(backdropPath);
 }
 
     /**
@@ -139,6 +145,10 @@ public class Movies implements Parcelable {
         return review;
     }
 
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
     public void setOriginalTitle(String originalTitle) {
         this.originalTitle = originalTitle;
     }
@@ -169,6 +179,10 @@ public class Movies implements Parcelable {
 
     public void setReview(List<Review> review) {
         this.review = review;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 
 }
