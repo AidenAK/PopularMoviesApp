@@ -47,6 +47,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             Movies movies = mMoviesList.get(position);
             Picasso.with(mContext)
                     .load(movies.getPosterPath())
+                    .placeholder(R.drawable.ic_photo_black_48dp)
+                    .error(R.drawable.error_48dp)
                     .into(holder.posterView);
             Log.d(TAG, "onBindViewHolder: poster path is "+ movies.getPosterPath());
         }
