@@ -221,7 +221,7 @@ public class MovieDetailActivity extends AppCompatActivity
                     values.put(MoivesContract.MoviesEntry.MOVIE_OVERVIEW, movieSelected.getOverview());
                     values.put(MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE, movieSelected.getReleaseDate());
                     values.put(MoivesContract.MoviesEntry.MOVIE_POSTER_PATH, movieSelected.getPosterPath());
-
+                    values.put(MoivesContract.MoviesEntry.MOVIE_BACKDROP_PATH, movieSelected.getBackdropPath());
 
                     Uri uri = getContentResolver().insert(MoivesContract.MoviesEntry.CONTENT_URI, values);
 
