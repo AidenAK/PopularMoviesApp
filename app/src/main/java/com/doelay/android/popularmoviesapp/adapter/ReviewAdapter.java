@@ -12,6 +12,9 @@ import com.doelay.android.popularmoviesapp.model.Review;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by doelay on 6/19/2017.
  */
@@ -51,13 +54,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewAdap
 
     public class ReviewAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView author;
-        private TextView review;
+        @BindView(R.id.tv_author) TextView author;
+        @BindView(R.id.tv_review) TextView review;
 
         public ReviewAdapterViewHolder(View view) {
             super(view);
-            author = (TextView) view.findViewById(R.id.tv_author);
-            review = (TextView) view.findViewById(R.id.tv_review);
+            ButterKnife.bind(this, view);
         }
     }
 }

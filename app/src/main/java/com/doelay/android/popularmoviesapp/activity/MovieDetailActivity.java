@@ -33,27 +33,31 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailActivity extends AppCompatActivity
         implements GetTrailerLinkTask.OnTrailerDataAvailable, TrailerAdapter.OnTrailerSelectedListener, GetReviewTask.OnReviewAvailable {
+
+    @BindView(R.id.tv_movie_title) TextView movieTitle;
+    @BindView(R.id.tv_vote_average) TextView voteAverage;
+    @BindView(R.id.tv_release_date) TextView releaseDate;
+    @BindView(R.id.tv_overview) TextView plot;
+    @BindView(R.id.iv_movie_poster) ImageView moviePoster;
+    @BindView(R.id.iv_backdrop) ImageView backdrop;
+    @BindView(R.id.rv_trailer_view) RecyclerView trailerRecyclerView;
+    @BindView(R.id.rv_review) RecyclerView reviewRecyclerView;
+    @BindView(R.id.tb_favorite_star) ToggleButton favoriteButton;
 
     private static final String TAG = MovieDetailActivity.class.getSimpleName();
     private static final String MOVIE_SELECTED = "movie_selected";
 
-    private TextView movieTitle;
-    private TextView voteAverage;
-    private TextView releaseDate;
-    private TextView plot;
-    private ImageView moviePoster;
-    private ImageView backdrop;
     private Movies movieSelected;
     private Trailer trailer;
-    private RecyclerView trailerRecyclerView;
     private TrailerAdapter trailerAdapter;
-    private RecyclerView reviewRecyclerView;
     private ReviewAdapter reviewAdapter;
     private String[] trailerLinks;
     private List<Review> reviewList;
-    private ToggleButton favoriteButton;
     private String movieIdString;
     LinearLayoutManager trailerLayoutManager;
     LinearLayoutManager reviewLayoutManager;
@@ -71,15 +75,7 @@ public class MovieDetailActivity extends AppCompatActivity
 
 
         //find UI elements
-        movieTitle = (TextView) findViewById(R.id.tv_movie_title);
-        voteAverage = (TextView) findViewById(R.id.tv_vote_average);
-        releaseDate = (TextView) findViewById(R.id.tv_release_date);
-        plot = (TextView) findViewById(R.id.tv_overview);
-        moviePoster = (ImageView) findViewById(R.id.iv_movie_poster);
-        backdrop = (ImageView) findViewById(R.id.iv_backdrop);
-        trailerRecyclerView = (RecyclerView) findViewById(R.id.rv_trailer_view);
-        reviewRecyclerView = (RecyclerView) findViewById(R.id.rv_review);
-        favoriteButton = (ToggleButton) findViewById(R.id.tb_favorite_star);
+        ButterKnife.bind(this);
 
         //set up trailer recycler view
         initializeTrailerRecyclerView();
@@ -225,6 +221,7 @@ public class MovieDetailActivity extends AppCompatActivity
                     values.put(MoivesContract.MoviesEntry.MOVIE_OVERVIEW, movieSelected.getOverview());
                     values.put(MoivesContract.MoviesEntry.MOVIE_RELEASE_DATE, movieSelected.getReleaseDate());
                     values.put(MoivesContract.MoviesEntry.MOVIE_POSTER_PATH, movieSelected.getPosterPath());
+
 
                     Uri uri = getContentResolver().insert(MoivesContract.MoviesEntry.CONTENT_URI, values);
 

@@ -27,18 +27,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class MainActivity extends AppCompatActivity
         implements MovieAdapter.OnMovieSelectedListener, FetchMoviesDataTask.OnMoviesDataAvailable {
+
+    @BindView(R.id.tv_error_message) TextView errorMessage;
+    @BindView(R.id.pb_loading) ProgressBar loadingBar;
+    @BindView(R.id.rv_movies) RecyclerView movieRecyclerView;
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String MOVIE_RECYCLER_VIEW_STATE = "movie_recycler_view_state";
     public static final String DOWNLOADED_MOVIE_LIST = "downloaded_movie_list";
 
     private MovieAdapter movieAdapter;
-    private ProgressBar loadingBar;
-    private TextView errorMessage;
-    private RecyclerView movieRecyclerView;
     private GridLayoutManager gridLayoutManager;
     private Parcelable recyclerViewState;
     private List<Movies> downloadedMovieList;
@@ -52,9 +56,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        movieRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
-        errorMessage = (TextView) findViewById(R.id.tv_error_message);
-        loadingBar = (ProgressBar) findViewById(R.id.pb_loading);
+        ButterKnife.bind(this);
 
         //set the number of column
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {

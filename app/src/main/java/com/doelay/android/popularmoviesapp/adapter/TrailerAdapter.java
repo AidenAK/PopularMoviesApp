@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import com.doelay.android.popularmoviesapp.R;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by doelay on 6/19/2017.
  */
@@ -60,11 +63,11 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     public class TrailerAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener{
 
-        private ImageView trailerView;
+        @BindView(R.id.iv_trailer_view) ImageView trailerView;
 
         public TrailerAdapterViewHolder (View view) {
             super(view);
-            trailerView = (ImageView) view.findViewById(R.id.iv_trailer_view);
+            ButterKnife.bind(this, view);
             view.setOnClickListener(this);
         }
 

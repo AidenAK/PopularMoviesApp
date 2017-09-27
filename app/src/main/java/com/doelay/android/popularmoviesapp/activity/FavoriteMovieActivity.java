@@ -21,6 +21,9 @@ import com.doelay.android.popularmoviesapp.R;
 import com.doelay.android.popularmoviesapp.adapter.FavoriteMovieAdapter;
 import com.doelay.android.popularmoviesapp.db.MoivesContract;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by doelay on 6/20/2017.
  */
@@ -28,15 +31,16 @@ import com.doelay.android.popularmoviesapp.db.MoivesContract;
 public class FavoriteMovieActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    @BindView(R.id.tv_no_favorite) TextView noFavorite;
+    @BindView(R.id.rv_favorite_movies) RecyclerView favoriteMovieRecyclerView;
+
     private static final String TAG = FavoriteMovieActivity.class.getSimpleName();
 
     public static final String FAVORITE_RECYCLER_VIEW_STATE = "favorite_recycler_view_state";
     private static final int FAVORITE_MOVIE_LOADER_ID = 1;
 
     private FavoriteMovieAdapter mFavoriteMovieAdapter;
-    private RecyclerView favoriteMovieRecyclerView;
     private LinearLayoutManager recyclerLayoutManager;
-    private TextView noFavorite;
     private Parcelable recyclerState;
 
     @Override
@@ -45,9 +49,8 @@ public class FavoriteMovieActivity extends AppCompatActivity
         setContentView(R.layout.activity_favorite);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        noFavorite = (TextView) findViewById(R.id.tv_no_favorite);
+        ButterKnife.bind(this);
 
-        favoriteMovieRecyclerView = (RecyclerView) findViewById(R.id.rv_favorite_movies);
         recyclerLayoutManager = new LinearLayoutManager(this);
         favoriteMovieRecyclerView.setLayoutManager(recyclerLayoutManager);
         mFavoriteMovieAdapter = new FavoriteMovieAdapter();

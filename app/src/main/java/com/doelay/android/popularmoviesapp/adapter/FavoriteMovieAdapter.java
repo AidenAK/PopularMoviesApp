@@ -10,6 +10,9 @@ import android.widget.TextView;
 import com.doelay.android.popularmoviesapp.R;
 import com.doelay.android.popularmoviesapp.db.MoivesContract;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by doelay on 6/20/2017.
  */
@@ -60,11 +63,11 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
     class FavoriteMovieViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView favoriteMovieTitle;
+        @BindView(R.id.tv_favorite_movie_title) TextView favoriteMovieTitle;
 
         public FavoriteMovieViewHolder(View view) {
             super(view);
-            favoriteMovieTitle = (TextView) view.findViewById(R.id.tv_favorite_movie_title);
+            ButterKnife.bind(this, view);
         }
     }
 }
